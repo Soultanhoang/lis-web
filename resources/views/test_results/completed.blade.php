@@ -37,7 +37,7 @@
                         <th>Bác sĩ chỉ định</th>
                         <th>Ngày chỉ định</th>
                         <th>Ngày có kết quả</th>
-                        <th style="width: 210px" class="text-center">Hành động</th>
+                        <th style="width: 140px" class="text-center">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,9 +65,9 @@
                                 </a>
 
                                 {{-- Nút In Phiếu (Quan trọng nhất ở trang này) --}}
-                                <a href="{{ route('test_results.print', $request->id) }}" target="_blank" class="btn btn-sm btn-secondary" title="In phiếu kết quả">
+                                <!-- <a href="{{ route('test_results.print', $request->id) }}" target="_blank" class="btn btn-sm btn-secondary" title="In phiếu kết quả">
                                     <i class="fas fa-print"></i> In KQ
-                                </a>
+                                </a> -->
                             </td>
                         </tr>
                     @empty

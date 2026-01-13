@@ -29,7 +29,7 @@ class PatientController extends Controller
     $prefix = 'BN' . date('ymd'); // Ví dụ: BN251209
     
     // Tìm bệnh nhân mới nhất trong ngày
-    $latest = \App\Models\Patient::where('patient_code', 'like', $prefix . '%')
+    $latest = Patient::where('patient_code', 'like', $prefix . '%')
                 ->orderBy('patient_code', 'desc')
                 ->first();
 
@@ -42,7 +42,7 @@ class PatientController extends Controller
     }
 
     // Tạo mã dự kiến: BN2512090001
-    $suggested_code = $prefix . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+    $suggested_code = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
     return view('patients.create', compact('suggested_code'));
     }
@@ -94,7 +94,6 @@ class PatientController extends Controller
         // 2. Sử dụng Transaction để sinh mã và lưu an toàn
         DB::transaction(function () use ($validatedData) {
             
-            // --- LOGIC SINH MÃ BỆNH NHÂN (START) ---
             $prefix = 'BN' . date('ymd'); // Ví dụ: BN251209
             
             // Tìm mã lớn nhất hôm nay và KHÓA dòng đó lại (lockForUpdate)
@@ -113,8 +112,7 @@ class PatientController extends Controller
             }
 
             // Tạo mã cuối cùng: BN2512090001
-            $finalCode = $prefix . str_pad($nextNr, 4, '0', STR_PAD_LEFT);
-            // --- LOGIC SINH MÃ BỆNH NHÂN (END) ---
+            $finalCode = $prefix . str_pad($nextNr, 3, '0', STR_PAD_LEFT);
 
             // 3. Gộp mã vừa sinh vào mảng dữ liệu đã validate
             $validatedData['patient_code'] = $finalCode;

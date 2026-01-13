@@ -22,18 +22,16 @@ class ReportController extends Controller
         $totalCompleted = TestRequest::whereBetween('created_at', [$start, $end])
                                      ->where('status', 'completed')->count();
         
-        // Giả sử bạn tính doanh thu dựa trên số chỉ số đã làm * giá tiền
-        // (Đây là query nâng cao một chút)
+        // Tính doanh thu dựa trên số chỉ số đã làm * giá tiền
         $revenue = TestResult::join('test_types', 'test_results.test_type_id', '=', 'test_types.id')
                              ->whereBetween('test_results.created_at', [$start, $end])
                              ->whereNotNull('test_results.result_value') // Chỉ tính cái đã có kết quả
                              ->sum('test_types.price');
 
         // 3. Dữ liệu cho Biểu đồ Tròn: Tỷ lệ các loại xét nghiệm (Gluco, Ure...)
-       $testTypeStats = DB::table('test_results')
+        $testTypeStats = DB::table('test_results')
                             ->join('test_types', 'test_results.test_type_id', '=', 'test_types.id')
                             ->whereBetween('test_results.created_at', [$start, $end])
-                            // QUAN TRỌNG: Đặt alias (as type_name) để chắc chắn không bị trùng
                             ->select('test_types.test_name as type_name', DB::raw('count(*) as total'))
                             ->groupBy('test_types.test_name')
                             ->orderByDesc('total')

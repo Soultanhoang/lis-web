@@ -30,7 +30,7 @@ $mllp_start_char = "\x0B"; // bắt đầu MLLP
 $mllp_end_segment = "\x1C\r"; // kết thúc MLLP
 // ---------------------------------------------
 Log::info("==========================================");
-Log::info("Starting HL7 listener on {$address}:{$port}...");
+Log::info("Bắt đầu lắng nghe bản tin HL7 tại {$address}:{$port}...");
 
 // Create, Bind, Listen (Giữ nguyên)
 $sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -49,11 +49,11 @@ if (socket_listen($sock, 5) === false) {
     socket_close($sock);
     exit;
 }
-Log::info("Server is listening...");
+Log::info("Server đang lắng nghe...");
 
 // Loop to accept incoming connections
 do {
-    Log::info("Waiting for a connection...");
+    Log::info("Chờ kết nối...");
     $client_sock = socket_accept($sock);
     if ($client_sock === false) {
         Log::warning("socket_accept() failed: " . socket_strerror(socket_last_error($sock)));
@@ -62,14 +62,14 @@ do {
     // Lấy IP client để log
   
     socket_getpeername($client_sock, $client_ip);
-    Log::info("Client connected from {$client_ip}.");
+    Log::info("Client đã kết nối với IP: {$client_ip}.");
 
     // --- SỬA VÒNG LẶP ĐỌC DỮ LIỆU (XỬ LÝ MLLP) ---
     $full_message = ''; // Biến lưu toàn bộ dữ liệu nhận được
     $start_found = false;
     $end_found = false;
 
-    Log::info("Reading data from {$client_ip}...");
+    Log::info("Đọc dữ liệu từ {$client_ip}...");
     while (true) {
         $buffer = socket_read($client_sock, 1024); // Đọc tối đa 1024 bytes
 
@@ -78,7 +78,7 @@ do {
             if ($buffer === false) {
                 Log::warning("socket_read() failed: " . socket_strerror(socket_last_error($client_sock)));
             } else {
-                Log::info("Client {$client_ip} disconnected before MLLP end segment.");
+                Log::info("Client {$client_ip} ngắt kết nối trước khi gửi gói tin HL7.");
             }
             // Đóng kết nối phía server nếu client đóng trước khi gửi xong
              if ($client_sock) socket_close($client_sock);
@@ -112,7 +112,7 @@ do {
 
         // Bảo vệ: Nếu nhận quá nhiều dữ liệu mà không thấy điểm kết thúc -> lỗi
         if (strlen($full_message) > 50000) { // Giới hạn 50KB
-             Log::error("Received too much data (>50KB) from {$client_ip} without finding MLLP end segment. Closing connection.");
+             Log::error("Dữ liệu nhận được quá lớn từ IP: {$client_ip} mà không thấy điểm kết thúc gói tin MLLP. Đóng kết nối.");
               if ($client_sock) socket_close($client_sock);
               $client_sock = null;
              break;
@@ -121,23 +121,23 @@ do {
 
     // Nếu vòng lặp đọc kết thúc mà chưa đóng client_sock (nghĩa là đã tìm thấy end_found hoặc lỗi khác)
      if (!$client_sock) { // Nếu client đã bị đóng do lỗi đọc hoặc ngắt kết nối sớm
-          Log::warning("Skipping processing due to client connection issue.");
+          Log::warning("Bỏ qua xử lý do kết nối Client bị lỗi.");
           continue; // Bỏ qua, chờ kết nối tiếp theo
      }
     
 
     // --- XỬ LÝ TIN NHẮN HL7 ---
     if ($end_found && !empty($hl7String)) {
-        Log::info("Received complete HL7 message (" . strlen($hl7String) . " bytes) from {$client_ip}.");
+        Log::info("Đã nhận tin nhắn HL7 (" . strlen($hl7String) . " bytes) từ {$client_ip}.");
         // echo $hl7String; // Debug nếu cần xem nội dung
       
         try {
             // Normalize segment separators (quan trọng)
             $hl7String = str_replace(["\r\n", "\n"], "\r", $hl7String);
 
-            Log::info('Parsing HL7 string...');
+            Log::info('Phân tích chuỗi HL7...');
             $message = new Message($hl7String);
-            Log::info('HL7 Message Parsed Successfully!');
+            Log::info('Phân tích bản tin HL7 thành công!');
 
             $sampleId = null;
             $obrSegment = $message->getFirstSegmentInstance('OBR');
@@ -151,16 +151,16 @@ do {
 
             // Kiểm tra Sample ID
             if (!$sampleId) {
-                Log::error('Could not extract Sample ID (Barcode from OBR-3) from HL7 message.');
+                Log::error('LỖI: Không tìm thấy mã mẫu (OBR-3) trong tin nhắn HL7.');
                 continue;
             }
-            Log::info("  - Sample ID (Barcode) Found: " . $sampleId);
+            Log::info("  - Tìm thấy mã mẫu: " . $sampleId);
 
             // OBX Results
             $resultsToUpdate = [];
             $obxSegments = $message->getSegmentsByName('OBX');
             if (!empty($obxSegments)) {
-                  Log::info("  - Found " . count($obxSegments) . " OBX segments:");
+                  Log::info("  - Tìm thấy " . count($obxSegments) . " phân đoạn OBX:");
                   foreach ($obxSegments as $index => $obx) {
                        // ... (logic lấy testCode, resultValue như cũ) ...
                         $testCode = null; $resultValue = null;
@@ -170,20 +170,19 @@ do {
 
                         if ($testCode && $resultValue !== null) {
                             $resultsToUpdate[] = ['test_code' => trim($testCode), 'value' => trim($resultValue)];
-                            Log::info("    - OBX[".($index+1)."]: Test=" . $testCode . ", Result=" . $resultValue);
+                            Log::info("    - OBX[".($index+1)."]: Mã xét nghiệm = " . $testCode . ", Giá trị kết quả = " . $resultValue);
                         } else {
-                                Log::warning("    - OBX[".($index+1)."]: Skipping - Missing Test Code or Result Value.");
+                                Log::warning("    - OBX[".($index+1)."]: Bỏ qua - thiếu mã xét nghiệm hoặc giá trị kết quả.");
                         }
                   }
             } else {
-                 Log::warning("  - No OBX segments found in the message.");
+                 Log::warning("  - Không tìm thấy phân đoạn OBX nào trong bản tin.");
                  continue; // Không có kết quả để xử lý
             }
             
             // Cập nhật cơ sở dữ liệu dựa trên Sample ID và kết quả trích xuất
                 if (!empty($resultsToUpdate)) {
-                Log::info("Attempting to update database for Barcode: {$sampleId}...");
-                
+                Log::info("Thực hiện cập nhật CSDL cho mã mẫu: {$sampleId}...");
                 DB::beginTransaction();
                 try {
                     // --- 1. TÌM MẪU (SAMPLE) DỰA VÀO BARCODE MÁY GỬI ---
@@ -194,32 +193,32 @@ do {
                     $testRequest = null;
 
                     if ($sample) {
-                        Log::info("  - Found Sample ID: " . $sample->id . " (Type: " . $sample->specimen_type . ")");
+                        Log::info("  - Tìm thấy mẫu trong hệ thống: " . $sample->id . " (Loại mẫu: " . $sample->specimen_type . ")");
                         $testRequest = $sample->testRequest;
                         
                         // Cập nhật trạng thái mẫu: Đã nhận kết quả
                         $sample->update(['status' => 'received']); // Hoặc 'analyzed' nếu bạn muốn thêm trạng thái này
                     } else {
                         // FALLBACK: Nếu không tìm thấy mẫu, thử tìm trực tiếp bằng Mã phiếu (Hỗ trợ quy trình cũ)
-                        Log::warning("  - Sample not found for barcode {$sampleId}. Trying legacy lookup by Request Code...");
+                        Log::warning("  - Không tìm thấy mẫu nào khớp với mã mẫu đang chạy. Thử tìm theo mã phiếu chỉ định...");
                         $testRequest = TestRequest::where('request_code', $sampleId)->first();
                     }
 
                     // --- 2. KIỂM TRA PHIẾU ---
                     if (!$testRequest) {
-                        Log::error("  - No TestRequest found for Barcode: " . $sampleId);
+                        Log::error("  - LỖI: Không tìm thấy phiếu chỉ định nào khớp với mã mẫu đang chạy: " . $sampleId);
                         DB::rollBack();
                         continue; 
                     }
 
                     // Quan trọng: Chỉ nhận kết quả nếu phiếu chưa hoàn tất (cho phép pending hoặc processing)
                     if ($testRequest->status === 'completed' && 'pending') {
-                         Log::warning("  - TestRequest ID {$testRequest->id} is already COMPLETED. Ignoring update.");
+                         Log::warning("  - THÔNG BÁO: Phiếu chỉ định {$testRequest->id} đã hoàn thành. Bỏ qua cập nhật.");
                          DB::rollBack();
                          continue;
                     }
 
-                    Log::info("  - Processing results for TestRequest ID: " . $testRequest->id);
+                    Log::info("  - Đang xử lý kết quả cho phiếu chỉ định: " . $testRequest->id);
                     $now = now();
                     $updateCount = 0;
 
@@ -250,9 +249,9 @@ do {
                                 'note'          => 'Auto-Analyzer'
                             ]);
                             $updateCount++;
-                            Log::info("    - Updated: {$testCode} => {$value}");
+                            Log::info("    -> Đã cập nhật: {$testCode} => {$value}");
                         } else {
-                            Log::warning("    - Skipped: {$testCode} (No matching pending request found for this sample)");
+                            Log::warning("    -> Bỏ qua: {$testCode} (Không tìm thấy chỉ định chờ kết quả cho mã xét nghiệm này)");
                         }
                     }
 
@@ -262,35 +261,43 @@ do {
                         $pendingResults = TestResult::where('test_request_id', $testRequest->id)
                                                     ->whereNull('result_value')
                                                     ->count();
-
                         if ($pendingResults == 0) {
                             // Nếu đã đủ hết -> COMPLETED
                             $testRequest->update(['status' => 'completed']);
-                            Log::info("  - Status Update: TestRequest ID {$testRequest->id} marked as COMPLETED.");
+                            Log::info("  - Trạng thái phiếu chỉ định: {$testRequest->id} được cập nhật sang đã có kết quả.");
                         } else {
                             // Nếu chưa đủ -> Đảm bảo là PROCESSING (để thoát khỏi danh sách pending)
                             if ($testRequest->status !== 'processing') {
                                 $testRequest->update(['status' => 'processing']);
-                                Log::info("  - Status Update: TestRequest ID {$testRequest->id} marked as PROCESSING.");
+                                Log::info("  - Trạng thái phiếu chỉ định: {$testRequest->id} được cập nhật sang đang xử lý.");
                             }
                         }
-                    }
+                    }   
+                          // --- 4. CẬP NHẬT TRẠNG THÁI (Backup cho trường hợp quên xác nhận lấy mẫu) ---
+                    // if ($updateCount > 0) {
+                    //     // Chỉ can thiệp khi phiếu vẫn đang treo ở 'pending'
+                    //     if ($testRequest->status === 'pending') {
+                    //         $testRequest->update(['status' => 'processing']);
+                    //         Log::info("  - Trạng thái phiếu chỉ định: {$testRequest->id} được cập nhật sang đang xử lý.");
+                    //         Log::warning("Phiếu {$testRequest->id} chưa xác nhận lấy mẫu nhưng đã có kết quả máy -> Tự động chuyển Processing.");
+                    //     }
+                    // }
 
                     DB::commit();
-                    Log::info("  - Transaction Committed. updated {$updateCount} results.");
+                    Log::info("  - HOÀN TẤT CẬP NHẬT. Đã lưu {$updateCount} kết quả.");
 
                 } catch (\Exception $dbExc) {
                     DB::rollBack();
-                    Log::error("!!! DATABASE UPDATE FAILED for Barcode: {$sampleId} !!! Error: " . $dbExc->getMessage());
+                    Log::error("! LỖI: Không cập nhật được CSDL cho mã mẫu đang chạy | Chi tiết: " . $dbExc->getMessage());
                 }
             } else {
-                 Log::warning("  - No valid results extracted from OBX segments.");
+                 Log::warning("  - Không có kết quả nào hợp lệ được trích xuất từ phân đoạn OBX.");
             }
 
         } catch (\Exception $e) {
              // Gửi NACK? (Nâng cao)
              // 1. Log ra màn hình console
-            Log::error("!!! FAILED TO PARSE HL7 MESSAGE from {$client_ip} !!! Error: " . $e->getMessage());
+            Log::error("! LỖI: Không phân tích được bản tin HL7 từ IP: {$client_ip} | Chi tiết: " . $e->getMessage());
 
             // 2. Ghi vào file log (Dùng đúng biến $full_message hoặc $hl7String)
             // Kiểm tra xem biến nào đang có dữ liệu thì dùng biến đó
@@ -303,27 +310,27 @@ do {
                 );
             } catch (\Exception $fileEx) {
                 // Bỏ qua lỗi ghi file để tránh sập server
-                Log::warning("Could not write to error log file."); 
+                Log::warning("Không thể ghi file log lỗi."); 
             }
         }
 
     } elseif ($end_found && empty($hl7String)) {
-        Log::warning("Received MLLP frame but HL7 content is empty from {$client_ip}.");
+        Log::warning("Nhận được gói tin MLLP nhưng nội dung bản tin HL7 trống từ IP: {$client_ip}.");
     } else {
         // Trường hợp này xảy ra nếu client đóng kết nối trước khi gửi xong MLLP end segment
-        Log::warning("Incomplete MLLP message received or connection closed prematurely by {$client_ip}.");
+        Log::warning("Gói tin MLLP không hoàn chỉnh hoặc kết nối bị ngắt bởi IP: {$client_ip}.");
     }
 
     // Đóng kết nối client nếu nó chưa bị đóng do lỗi đọc
     if ($client_sock) {
          socket_close($client_sock);
-         Log::info("Client {$client_ip} disconnected.");
+         Log::info("Đóng kết nối với Client {$client_ip}.");
     }
     echo "\n"; // Thêm dòng trống cho dễ đọc log console
 
 } while (true);
 
 socket_close($sock);
-Log::info("Server shutting down."); // Dòng này thường không đạt tới
+Log::info("Server đã ngắt."); // Dòng này thường không đạt tới
 
 ?>

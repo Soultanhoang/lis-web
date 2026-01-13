@@ -12,7 +12,6 @@
         <div class="card-body">
             
             {{-- Form Tìm kiếm (Giữ nguyên giao diện) --}}
-            {{-- Lưu ý: Bạn nhớ đổi route action về đúng route của trang Samples --}}
             <form action="{{ route('samples.index') }}" method="GET" class="mb-3" style="width: 520px">
                 <div class="input-group">
                     <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm..." value="{{ request('keyword') }}">
@@ -28,7 +27,15 @@
                     @endif
                 </div>
             </form>
-
+            {{-- Hiển thị thông báo thành công --}}
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif    
             <table class="table table-bordered table-hover">
                 <thead class="thead-light">
                     <tr>
@@ -52,9 +59,6 @@
                             <td>{{ $request->doctor->name }}</td>
                             <td>{{ $request->created_at->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}</td>
                             <td class="text-center">
-                                
-                                {{-- NÚT LẤY MẪU (Thay thế cho 2 nút cũ) --}}
-                                {{-- Khi bấm sẽ chuyển sang trang thực hiện lấy mẫu (quét barcode, xác nhận) --}}
                                 <a href="{{ route('samples.create', $request->id) }}" class="btn btn-sm btn-primary">
                                     <i class="fas fa-vial"></i> Lấy mẫu
                                 </a>

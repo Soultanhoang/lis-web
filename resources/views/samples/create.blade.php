@@ -52,7 +52,7 @@
                             </tr>
                             <tr>
                                 <td>Ngày chỉ định:</td>
-                                <td>{{ $testRequest->created_at->format('d/m/Y H:i') }}</td>
+                                <td>{{ $testRequest->created_at->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i')  }}</td>
                             </tr>
                             <tr>
                                 <td>Chẩn đoán:</td>
@@ -105,7 +105,7 @@
                                     @elseif ($sample->specimen_type == 'Huyết thanh')
                                         <span class="font-weight-bold text-primary">Huyết thanh</span>
                                     @else
-                                        <span class="font-weight-bold text-secondary">Máu toàn phần</span>
+                                        <span class="font-weight-bold text-secondary">Khác</span>
                                     @endif
                                 <td class="align-middle">
                                     @if ($sample->status == 'pending')
@@ -150,26 +150,12 @@
     $('#form-collect-samples').on('submit', function(e) {
             
             // Đếm số lượng checkbox có class 'sample-checkbox' đang được check
-            // (Class này bạn đã có trong code bảng ở các bài trước)
             var checkedCount = $('.sample-checkbox:checked').length;
 
             // Nếu chưa chọn cái nào (Count = 0)
             if (checkedCount === 0) {
-                e.preventDefault(); // <--- LỆNH QUAN TRỌNG: Chặn reload trang
-                
-                // Hiển thị thông báo (Dùng Alert thường hoặc SweetAlert nếu có)
-                
-                // Cách 1: Alert mặc định trình duyệt
+                e.preventDefault(); // Chặn reload trang
                 alert('Vui lòng chọn ít nhất 1 mẫu để xác nhận!');
-
-                // Cách 2: Nếu bạn dùng SweetAlert (AdminLTE thường có sẵn)
-                // /*
-                // Swal.fire({
-                //     icon: 'warning',
-                //     title: 'Chưa chọn mẫu!',
-                //     text: 'Vui lòng tích chọn ít nhất 1 ống mẫu để xác nhận.',
-                // });
-                // */
             }
         });
 </script>

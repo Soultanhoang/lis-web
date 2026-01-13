@@ -7,6 +7,7 @@
 @stop
 
 @section('content')
+
 {{-- Giả lập danh sách nhóm để hiển thị (Bạn nên truyền biến này từ Controller sang) --}}
 @php
     $categories = ['Sinh hóa', 'Huyết học', 'Nước tiểu', 'Miễn dịch & Vi sinh', 'Khác'];
@@ -63,6 +64,10 @@
                     </div>
                 </div>
             </div>
+            {{-- Nút quay lại --}}
+            <a href="{{ route('test_requests.index') }}" class="btn btn-secondary float-left">
+                <i class="fa fa-arrow-left"></i> Quay lại
+            </a>
         </div>
 
         {{-- Thông tin xét nghiệm --}}
@@ -457,8 +462,6 @@ $(document).ready(function() {
             
             // Hiển thị loading nhẹ (nếu muốn)
             checkbox.prop('disabled', true); 
-            
-            // LƯU Ý: Bạn cần tạo Route 'test_types.get_by_category' trong Laravel
             // Trả về JSON: { data: [ {id, test_code, test_name, category_name, price}, ... ] }
             $.ajax({
                 url: "/test-types/get-by-category", // <--- CẦN ROUTE NÀY
@@ -516,12 +519,6 @@ $(document).ready(function() {
         currentTotalPrice -= priceToRemove;
         if (currentTotalPrice < 0) currentTotalPrice = 0;
         updateTotalPriceDisplay();
-        
-        // Khi xóa tay 1 dòng, nếu dòng đó thuộc 1 nhóm đang check,
-        // thì ta có nên bỏ check nhóm đó không? 
-        // Logic đơn giản: cứ để nguyên check hoặc bỏ check tuỳ bạn.
-        // Ở đây tôi giữ nguyên để code đơn giản.
-        
         $(this).closest('tr').remove();
     });
 
@@ -540,7 +537,7 @@ $(document).ready(function() {
         // 4. Reset tổng tiền về 0
         currentTotalPrice = 0;
         updateTotalPriceDisplay();
-        // 5. (UX) Bỏ tick tất cả các checkbox chọn nhóm trong Modal (nếu đang tick)
+        // 5. Bỏ tick tất cả các checkbox chọn nhóm trong Modal (nếu đang tick)
         $('.chk-category-select').prop('checked', false);
     });
 });

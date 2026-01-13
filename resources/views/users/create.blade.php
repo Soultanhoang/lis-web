@@ -61,8 +61,8 @@
                             </select>
                             @error('role') <span class="invalid-feedback">{{ $message }}</span> @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Lưu Tài khoản</button>
-                        <a href="{{ route('users.index') }}" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+                        <a href="{{ route('users.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
                 </form>
                 </div>
             </div>

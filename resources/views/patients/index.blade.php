@@ -41,7 +41,7 @@
                                 <th>Giới tính</th>
                                 <th>Địa chỉ</th>
                                 <th>SĐT</th>
-                                <th style="width: 230px;">Hành động</th>
+                                <th style="width: 150px;">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -117,7 +117,7 @@
                                     <th>Mã bệnh nhân</th>
                                     <th>Họ & tên</th>
                                     <th>SĐT</th>
-                                    <th style="width: 160px;">Hành động</th>
+                                    <th style="width: 70px;">Hành động</th>
                                 </tr>
                             </thead>
                             {{-- JS sẽ điền kết quả vào đây --}}
@@ -172,7 +172,7 @@
                                 '<td>' + patient.full_name + '</td>' +
                                 '<td>' + (patient.phone_number ? patient.phone_number : 'N/A') + '</td>' +
                                 '<td>' +
-                                    '<a href="' + showUrl + '" class="btn btn-xs btn-success"><i class="fa fa-eye"></i> Xem chi tiết</a> ' +
+                                    // '<a href="' + showUrl + '" class="btn btn-xs btn-success"><i class="fa fa-eye"></i> Xem chi tiết</a> ' +
                                     '<a href="' + editUrl + '" class="btn btn-xs btn-info"><i class="fa fa-edit"></i> Sửa</a>' +
                                 '</td>' +
                                 '</tr>';

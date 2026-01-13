@@ -109,8 +109,8 @@
                             @enderror
                         </div>
                         
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                        <a href="{{ route('test_types.index') }}" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+                        <a href="{{ route('test_types.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
                     </form>
                 </div>
             </div>

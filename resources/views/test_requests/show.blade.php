@@ -82,34 +82,6 @@
         <div class="col-md-5 d-print-none">
             <div class="card card-info">
                 <div class="card-body">
-                    {{-- 1. Thông tin chỉ định --}}
-                    <!-- <div class="col-md-12 d-flex">
-                        <div class="col-md-6">
-                            <p><strong>Bác sĩ chỉ định:</strong> {{ $testRequest->doctor->name }}</p>
-                            <p><strong>Ngày chỉ định:</strong> {{ $testRequest->created_at->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}</p>
-                            <p>  @if($testRequest->status == 'completed')
-                                <strong>Ngày có kết quả:</strong> {{ $testRequest->updated_at->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}
-                            @else
-                                <strong>Ngày có kết quả:</strong>
-                            @endif
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Chẩn đoán:</strong> {{ $testRequest->diagnosis ?? 'N/A' }}</p> -->
-                            <!-- <p><strong>Trạng thái:</strong>
-                              @if($testRequest->status == 'pending')
-                            <span class="badge badge-warning">Chờ lấy mẫu</span>
-                            @elseif($testRequest->status == 'processing')
-                                <span class="badge badge-info">Đã lấy mẫu</span>
-                            @elseif($testRequest->status == 'completed')
-                                <span class="badge badge-success">Đã có kết quả</span>
-                            @else
-                                <span class="badge badge-danger">Đã hủy</span>
-                            @endif
-                            </p> -->
-                        <!-- </div>
-                    </div>
-                     -->
                     {{-- 2. Danh sách xét nghiệm đã chỉ định --}}
                     <h5 class="text-primary font-weight-bold">3. THÔNG TIN CHI TIẾT CHỈ ĐỊNH</h5>
                     <table class="table table-sm table-bordered mb-3"> 

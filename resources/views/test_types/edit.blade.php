@@ -110,8 +110,8 @@
                             @enderror
                         </div>
                         
-                        <button type="submit" class="btn btn-primary">Cập nhật</button>
-                        <a href="{{ route('test_types.index') }}" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Cập nhật</button>
+                        <a href="{{ route('test_types.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
                     </form>
                 </div>
             </div>

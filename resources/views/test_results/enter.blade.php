@@ -8,9 +8,19 @@
     @endphp
     <div class="d-flex justify-content-between">
         <h1 style="font-family:Arial, Helvetica, sans-serif">{{ $testRequest->status === 'processing' ? 'Nhập kết quả xét nghiệm' : 'Phiếu kết quả' }} 
-        <span class="text-muted mr-2" style="font-size: 0.9rem;">(Mã phiếu chỉ định: <b>{{ $testRequest->request_code }}</b> | Bệnh nhân: <b class="text-uppercase">{{ $testRequest->patient->full_name }}</b>)</span></h1>
+        <span class="text-muted mr-2" style="font-size: 0.9rem;">(Mã phiếu chỉ định: <b>{{ $testRequest->request_code }}</b> | Bệnh nhân: <b class="text-uppercase">{{ $testRequest->patient->full_name }}</b>)</span>
+    </h1>
+       {{-- Nút quay lại --}}
+       @if($testRequest->status === 'processing')
+            <a href="{{ route('test_results.index') }}" class="btn btn-secondary float-left">
+                <i class="fa fa-arrow-left"></i> Quay lại
+            </a>
+        @elseif($testRequest->status === 'completed')
+            <a href="{{ route('test_results.completed') }}" class="btn btn-secondary float-left">
+                <i class="fa fa-arrow-left"></i> Quay lại
+            </a>
+        @endif
     </div>
-   
 @stop
 
 @section('content')
@@ -233,7 +243,6 @@ $(document).ready(function() {
                                 $noteInput.val(item.notes);
                             }
 
-                            // --- LOGIC MỚI CỦA BẠN ---
                             // Chỉ update nếu ô đó chưa bị khóa (chưa là machine-result)
                             // HOẶC nếu giá trị mới khác giá trị đang hiển thị (trường hợp máy chạy lại)
                             if (!$input.hasClass('machine-result') || $input.val() != item.result_value) {

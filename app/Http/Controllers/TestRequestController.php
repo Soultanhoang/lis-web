@@ -47,15 +47,15 @@ class TestRequestController extends Controller
             $nextNumber = 1;
         }
 
-        // Tạo mã dự kiến: 2512090001
-        $suggested_code = $prefix . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+        // Tạo mã dự kiến
+        $suggested_code = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
         // 2. Truyền sang View
         return view('test_requests.create', compact('suggested_code'));
     }
 
     /**
-     * Lưu phiếu chỉ định mới (HÀM PHỨC TẠP NHẤT)
+     * Lưu phiếu chỉ định mới 
      */
     public function store(Request $request)
     {
@@ -73,8 +73,8 @@ class TestRequestController extends Controller
 
         DB::beginTransaction();
         try {
-            // --- A. LOGIC SINH MÃ SID (An toàn tuyệt đối) ---
-            $prefix = date('ymd'); // Ví dụ: 251209
+            
+            $prefix = date('ymd'); 
 
             // Lock bảng để chặn người khác chèn vào giữa lúc đang tính toán
             $latest = TestRequest::where('request_code', 'like', $prefix . '%')
@@ -85,15 +85,15 @@ class TestRequestController extends Controller
             // Tính số thứ tự tiếp theo
             $nextNr = $latest ? (intval(substr($latest->request_code, 6)) + 1) : 1;
             
-            // Chốt mã cuối cùng: 2512090001
-            $finalCode = $prefix . str_pad($nextNr, 4, '0', STR_PAD_LEFT);
+            // Chốt mã cuối cùng
+            $finalCode = $prefix . str_pad($nextNr, 3, '0', STR_PAD_LEFT);
             // -----------------------------------------------
 
             // --- B. TÍNH TỔNG TIỀN ---
             $testTypeIds = $validated['test_type_ids'];
             $totalPrice = TestType::whereIn('id', $testTypeIds)->sum('price');
 
-            // --- C. TẠO PHIẾU CHỈ ĐỊNH (Lưu 1 lần duy nhất) ---
+            // --- C. TẠO PHIẾU CHỈ ĐỊNH ---
             $testRequest = TestRequest::create([
                 'request_code' => $finalCode, // Dùng mã vừa sinh ở bước A
                 'patient_id' => $validated['patient_id'],
@@ -133,20 +133,11 @@ class TestRequestController extends Controller
      */
     public function show(TestRequest $testRequest)
     {
-       // Đảm bảo chỉ bác sĩ tạo phiếu mới xem được (bảo mật)
+       // Đảm bảo chỉ bác sĩ tạo phiếu mới xem được 
         if ($testRequest->doctor_id !== Auth::id()) {
             abort(403); // Lỗi Cấm truy cập
         }
-
-        // --- THÊM DÒNG NÀY ---
-        // Tải tất cả thông tin liên quan: 
-        // 1. Tên Bệnh nhân
-        // 2. Danh sách kết quả (results)
-        // 3. Tên của từng loại xét nghiệm (results.testType)
         $testRequest->load(['patient', 'results.testType']);
-        // ------------------
-
-        // File này chúng ta sắp tạo:
         return view('test_requests.show', compact('testRequest'));
     }
 

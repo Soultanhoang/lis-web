@@ -23,6 +23,7 @@ class Patient extends Model
         'phone_number',
     ];
 
+    // Một bệnh nhân có thể có nhiều phiếu chỉ định xét nghiệm
     public function testRequests()  
     {
         return $this->hasMany(TestRequest::class, 'patient_id');
