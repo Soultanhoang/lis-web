@@ -19,17 +19,8 @@ Route::get('/', function () {
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// ... (Route::get('/'), Auth::routes(), Route::get('/home'))
-
-// =================================================================
-// TẤT CẢ CÁC ROUTE CẦN ĐĂNG NHẬP
-// =================================================================
+// Routes: middleware auth
 Route::middleware(['auth'])->group(function () {
-    
-    // -----------------------------------------------------------------
-    // PHẦN 1: TẤT CẢ CÁC ROUTE "CỤ THỂ"
-    // -----------------------------------------------------------------
-
     // Cụ thể cho Bác sĩ & Admin
     Route::middleware(['can:is-doctor-or-admin'])->group(function () {
         
@@ -68,15 +59,12 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('samples')->name('samples.')->group(function () {
         
         // 1. Trang danh sách phiếu chờ lấy mẫu
-        // URL: /samples
         Route::get('/', [SampleController::class, 'index'])->name('index');
 
         // 2. Trang giao diện thực hiện lấy mẫu (Form xác nhận)
-        // URL: /samples/create/{test_request_id}
         Route::get('/create/{test_request_id}', [SampleController::class, 'create'])->name('create');
 
         // 3. Xử lý lưu xác nhận đã lấy mẫu (Submit Form)
-        // URL: /samples/store
         Route::post('/store', [SampleController::class, 'store'])->name('store');
 
        Route::get('/print-label/{sample}', [SampleController::class, 'printLabel'])->name('print_label');
@@ -103,10 +91,9 @@ Route::middleware(['auth'])->group(function () {
      ->name('test_results.latest');
     
     });
-    // -----------------------------------------------------------------
-    // PHẦN 2: TẤT CẢ CÁC ROUTE "CHUNG" (Resource)
-    // (Giữ nguyên phần này)
-    // -----------------------------------------------------------------
+    
+
+    // Route::resource 
     Route::middleware(['can:is-admin'])->group(function () {
         Route::resource('users', UserController::class)->except(['show']);
     });

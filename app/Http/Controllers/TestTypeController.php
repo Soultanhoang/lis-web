@@ -85,14 +85,20 @@ class TestTypeController extends Controller
                          ->with('success', 'Cập nhật danh mục xét nghiệm thành công.');
     }
 
-    // 6. Xóa
-    public function destroy(TestType $testType)
+    // 6. Xóa loại xét nghiệm
+    public function destroy($id)
     {
-        $testType->delete();
-        return redirect()->route('test_types.index')
-                         ->with('success', 'Xóa danh mục xét nghiệm thành công.');
+        $testType = TestType::findOrFail($id);
+
+        // Kiểm tra xem loại xét nghiệm này đã có kết quả nào chưa
+        if ($testType->testResults()->exists()) {
+            return redirect()->back()->with('error', 'Không thể xóa xét nghiệm này vì đã có dữ liệu kết quả liên quan.');
+    }
+    $testType->delete();
+    return redirect()->route('test_types.index')->with('success', 'Đã xóa loại xét nghiệm.');
     }
 
+    // Tìm kiếm loại xét nghiệm
     public function search(Request $request): JsonResponse
     {
         $query = $request->input('query');

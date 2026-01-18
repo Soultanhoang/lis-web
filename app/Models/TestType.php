@@ -40,4 +40,10 @@ class TestType extends Model
         'Miễn dịch & Vi sinh',
         'Chung',
     ];
+
+    // Một loại xét nghiệm có thể có nhiều kết quả xét nghiệm
+    public function testResults()
+    {
+        return $this->hasMany(TestResult::class, 'test_type_id');
+    }
 }

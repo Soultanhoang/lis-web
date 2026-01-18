@@ -32,6 +32,16 @@
                         </div>
                     @endif
 
+                    {{-- Hiển thị thông báo lỗi --}}
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
                     <table class="table table-bordered table-hover">
                         <thead class="thead-light">
                             <tr>

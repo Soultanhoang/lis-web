@@ -64,7 +64,7 @@ do {
     socket_getpeername($client_sock, $client_ip);
     Log::info("Client đã kết nối với IP: {$client_ip}.");
 
-    // --- SỬA VÒNG LẶP ĐỌC DỮ LIỆU (XỬ LÝ MLLP) ---
+    // --- VÒNG LẶP ĐỌC DỮ LIỆU (XỬ LÝ MLLP) ---
     $full_message = ''; // Biến lưu toàn bộ dữ liệu nhận được
     $start_found = false;
     $end_found = false;
@@ -273,7 +273,7 @@ do {
                             }
                         }
                     }   
-                          // --- 4. CẬP NHẬT TRẠNG THÁI (Backup cho trường hợp quên xác nhận lấy mẫu) ---
+                    // --- 4. CẬP NHẬT TRẠNG THÁI (Backup cho trường hợp quên xác nhận lấy mẫu) ---
                     // if ($updateCount > 0) {
                     //     // Chỉ can thiệp khi phiếu vẫn đang treo ở 'pending'
                     //     if ($testRequest->status === 'pending') {

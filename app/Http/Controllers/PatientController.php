@@ -191,12 +191,22 @@ class PatientController extends Controller
     /**
      * 6. Xóa bệnh nhân
      */
-    public function destroy(Patient $patient)
+    public function destroy($id)
     {
-        $patient->delete();
+        $patient = Patient::findOrFail($id);
 
-        return redirect()->route('patients.index')
-                         ->with('success', 'Xóa bệnh nhân thành công.');
+    // 1. Kiểm tra xem bệnh nhân này đã có phiếu chỉ định nào chưa
+    // Giả sử quan hệ trong Model Patient là hasMany('testRequests')
+    if ($patient->testRequests()->count() > 0) {
+        
+        // Trả về thông báo lỗi chứ KHÔNG xóa
+        return redirect()->back()->with('error', 'Không thể xóa bệnh nhân này vì họ đã có lịch sử khám bệnh.');
+    }
+
+    // 2. Nếu chưa có gì thì mới cho xóa
+    $patient->delete();
+
+    return redirect()->route('patients.index')->with('success', 'Đã xóa bệnh nhân thành công.');
     }
 
     /**
