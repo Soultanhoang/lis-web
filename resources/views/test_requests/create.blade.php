@@ -8,9 +8,8 @@
 
 @section('content')
 
-{{-- Giả lập danh sách nhóm để hiển thị (Bạn nên truyền biến này từ Controller sang) --}}
 @php
-    $categories = ['Sinh hóa', 'Huyết học', 'Nước tiểu', 'Miễn dịch & Vi sinh', 'Khác'];
+    $categories = ['Sinh hóa', 'Huyết học', 'Nước tiểu', 'Miễn dịch & Vi sinh'];
 @endphp
 
 <form class="form-submit-lock" action="{{ route('test_requests.store') }}" method="POST" id="formTestRequest">
@@ -180,7 +179,7 @@
                            placeholder="Nhập Mã XN hoặc Tên XN để tìm...">
                 </div>
 
-                {{-- PHẦN MỚI THÊM: CHECKBOX CHỌN NHÓM --}}
+                {{-- Chọn nhóm xét nghiệm --}}
                 <div class="form-group border p-2 bg-light rounded">
                     <label class="mb-1 d-block text-dark">Chọn nhóm:</label>
                     <div id="category-checkboxes">
@@ -196,8 +195,6 @@
                         @endforeach
                     </div>
                 </div>
-                {{-- KẾT THÚC PHẦN MỚI --}}
-
                 <hr>
                 <table class="table table-bordered table-hover">
                     <thead>
@@ -241,7 +238,7 @@ $(document).ready(function() {
         $('#totalPriceDisplay').text(formatMoney(currentTotalPrice));
     }
 
-    // --- 2. HÀM DÙNG CHUNG: THÊM XÉT NGHIỆM VÀO BẢNG ---
+    // --- 2. THÊM XÉT NGHIỆM VÀO BẢNG ---
     // (Tách ra để dùng được cho cả nút Thêm lẻ và Checkbox nhóm)
     function addTestToTable(id, code, name, category, price) {
         let testPrice = parseFloat(price) || 0;
@@ -258,7 +255,7 @@ $(document).ready(function() {
 
         let priceFormatted = testPrice.toLocaleString('vi-VN');
 
-        let newRow = '<tr data-category="' + categoryName + '">' + // Thêm data-category để dễ tìm xóa
+        let newRow = '<tr data-category="' + categoryName + '">' + 
             '<td>' + code + '</td>' +
             '<td>' +
                 '<input type="hidden" name="test_type_ids[]" value="' + id + '">' +
@@ -278,7 +275,7 @@ $(document).ready(function() {
     }
 
 
-    // --- 3. XỬ LÝ MODAL BỆNH NHÂN (Giữ nguyên) ---
+    // --- 3. XỬ LÝ MODAL BỆNH NHÂN ---
     let patientQuery = ''; 
     let patientTotalPages = 1;
 
@@ -435,7 +432,7 @@ $(document).ready(function() {
         fetchTestTypeData(testTypeQuery, $(this).data('page'));
     });
 
-    // --- 5. SỰ KIỆN: NÚT THÊM LẺ (Dùng hàm dùng chung) ---
+    // --- 5. SỰ KIỆN: NÚT THÊM LẺ  ---
     $(document).on('click', '.btn-add-test-type', function() {
         let testType = $(this);
         let result = addTestToTable(
@@ -451,16 +448,14 @@ $(document).ready(function() {
         }
     });
 
-    // --- 6. SỰ KIỆN: CHECKBOX CHỌN CẢ NHÓM (Tính năng mới) ---
+    // --- 6. SỰ KIỆN: CHECKBOX CHỌN CẢ NHÓM ---
     $(document).on('change', '.chk-category-select', function() {
         let checkbox = $(this);
         let categoryName = checkbox.val();
         let isChecked = checkbox.is(':checked');
 
         if (isChecked) {
-            // -- LOGIC CHỌN: GỌI AJAX LẤY HẾT TEST CỦA NHÓM --
-            
-            // Hiển thị loading nhẹ (nếu muốn)
+            // -- GỌI AJAX LẤY HẾT TEST CỦA NHÓM --
             checkbox.prop('disabled', true); 
             // Trả về JSON: { data: [ {id, test_code, test_name, category_name, price}, ... ] }
             $.ajax({
@@ -494,7 +489,7 @@ $(document).ready(function() {
             });
 
         } else {
-            // -- LOGIC BỎ CHỌN: XÓA CÁC TEST CỦA NHÓM ĐÓ --
+            // -- XÓA CÁC TEST CỦA NHÓM ĐÓ --
             // Duyệt qua bảng đã chọn, tìm dòng nào có data-category trùng thì xóa
             $('#selectedTestTypesTable tr').each(function() {
                 let row = $(this);

@@ -32,7 +32,7 @@ $mllp_end_segment = "\x1C\r"; // kết thúc MLLP
 Log::info("==========================================");
 Log::info("Bắt đầu lắng nghe bản tin HL7 tại {$address}:{$port}...");
 
-// Create, Bind, Listen (Giữ nguyên)
+// Create, Bind, Listen
 $sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 if ($sock === false) {
     Log::error("socket_create() failed: " . socket_strerror(socket_last_error()));
@@ -51,7 +51,7 @@ if (socket_listen($sock, 5) === false) {
 }
 Log::info("Server đang lắng nghe...");
 
-// Loop to accept incoming connections
+// Vòng lặp chấp nhận kết nối
 do {
     Log::info("Chờ kết nối...");
     $client_sock = socket_accept($sock);
@@ -129,10 +129,10 @@ do {
     // --- XỬ LÝ TIN NHẮN HL7 ---
     if ($end_found && !empty($hl7String)) {
         Log::info("Đã nhận tin nhắn HL7 (" . strlen($hl7String) . " bytes) từ {$client_ip}.");
-        // echo $hl7String; // Debug nếu cần xem nội dung
+        // echo $hl7String; // Debug 
       
         try {
-            // Normalize segment separators (quan trọng)
+            // Chuẩn hóa dòng kết thúc về \r
             $hl7String = str_replace(["\r\n", "\n"], "\r", $hl7String);
 
             Log::info('Phân tích chuỗi HL7...');
@@ -142,7 +142,7 @@ do {
             $sampleId = null;
             $obrSegment = $message->getFirstSegmentInstance('OBR');
             if ($obrSegment) {
-                // Thường lấy từ OBR-3 (Filler Order Number) hoặc OBR-2 (Placer Order Number)
+                // lấy từ OBR-3 (Filler Order Number) hoặc OBR-2 (Placer Order Number)
                 $obr3Value = $obrSegment->getField(3); 
                 if (is_object($obr3Value)) { $comp1 = $obr3Value->getComponent(1); $sampleId = $comp1 ? trim($comp1->getValue()) : null; }
                 elseif (is_array($obr3Value) && isset($obr3Value[0])) { $parts = explode('^', (string)$obr3Value[0]); $sampleId = trim($parts[0] ?? null); }
@@ -185,7 +185,7 @@ do {
                 Log::info("Thực hiện cập nhật CSDL cho mã mẫu: {$sampleId}...");
                 DB::beginTransaction();
                 try {
-                    // --- 1. TÌM MẪU (SAMPLE) DỰA VÀO BARCODE MÁY GỬI ---
+                    // --- 1. Tìm mẫu dựa theo mã máy gửi ---
                     $sample = Sample::with('testRequest')
                                     ->where('sample_code', $sampleId)
                                     ->first();
@@ -255,7 +255,7 @@ do {
                         }
                     }
 
-                    // --- 4. CẬP NHẬT TRẠNG THÁI PHIẾU (HOÀN TẤT HAY CHƯA?) ---
+                    // --- 4. CẬP NHẬT TRẠNG THÁI PHIẾU  ---
                     if ($updateCount > 0) {
                         // Đếm xem phiếu này còn bao nhiêu chỉ số chưa có kết quả
                         $pendingResults = TestResult::where('test_request_id', $testRequest->id)
