@@ -65,8 +65,7 @@
                            
                             <td>
                                 @php
-                                    // Logic: Lấy thời gian collected_at lớn nhất trong các mẫu của phiếu này
-                                    // (Để đảm bảo lấy đúng thời điểm mẫu cuối cùng được lấy)
+                                    // Lấy thời gian collected_at cuối cùng trong các mẫu của phiếu này
                                     $collectedDate = $request->samples->max('collected_at');
                                 @endphp
 
@@ -85,7 +84,7 @@
                                     $total = $request->testResults->count();
                                     // Đếm số dòng có result_value khác null
                                     $done = $request->testResults->whereNotNull('result_value')->count();
-                                    $percent = $total > 0 ? ($done / $total) * 100 : 0;
+                                    // $percent = $total > 0 ? ($done / $total) * 100 : 0;
                                 @endphp
                                 <span>{{ $done }}/{{ $total }} chỉ số</span>
                             </td>

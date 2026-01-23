@@ -11,7 +11,7 @@
     <div class="card card-primary card-outline">
         <div class="card-body">
             
-            {{-- Form Tìm kiếm (Giữ nguyên giao diện) --}}
+            {{-- Form Tìm kiếm --}}
             <form action="{{ route('samples.index') }}" method="GET" class="mb-3" style="width: 520px">
                 <div class="input-group">
                     <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm..." value="{{ request('keyword') }}">

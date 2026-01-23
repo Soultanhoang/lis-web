@@ -83,7 +83,7 @@ Route::middleware(['auth'])->group(function () {
         // Danh sách đã hoàn thành
         Route::get('/completed', [TestResultController::class, 'completedList'])->name('completed');
         
-        // Route In phiếu kết quả (PDF) - Chúng ta sẽ làm logic này sau, giờ cứ tạo route trước
+        // Route In phiếu kết quả (PDF)
         Route::get('/print/{test_request_id}', [TestResultController::class, 'printResult'])->name('print');
     });
 

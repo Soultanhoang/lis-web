@@ -73,16 +73,16 @@
     <div class="row">
         <div class="col-md-12">
            @foreach($groupedResults as $categoryName => $results)
-            {{-- LOGIC MỚI: Lấy danh sách mã mẫu duy nhất trong nhóm này --}}
+           {{-- Lấy danh sách mã mẫu duy nhất trong nhóm này --}}
             @php
                 // Lấy tất cả sample_code, lọc trùng, nối lại bằng dấu phẩy
-                // Kết quả VD: "251231-1" hoặc "251231-1, 251231-3"
+                // Kết quả VD: "251231001A" hoặc "251231001B"
                 $uniqueSamples = $results->pluck('sample.sample_code')
                                         ->unique()
                                         ->filter() // Loại bỏ giá trị null
                                         ->implode(', ');
                                         
-                // Lấy màu sắc dựa trên loại mẫu (để làm đẹp - tuỳ chọn)
+                // Lấy màu sắc dựa trên loại mẫu (- tuỳ chọn)
                 // Lấy specimen_type của phần tử đầu tiên
                 $specimenType = $results->first()->sample->specimen_type ?? 'N/A';
             @endphp
@@ -94,7 +94,7 @@
                             <h3 class="card-title font-weight-bold">
                                 Nhóm: {{ $categoryName }}
                             </h3>
-                            {{-- BÊN PHẢI: MÃ MẪU (Đã đưa lên đây) --}}
+                            {{-- BÊN PHẢI: MÃ MẪU --}}
                             <div>
                                 @if($uniqueSamples)
                                     <span class="text-muted mr-2" style="font-size: 0.9rem;">
@@ -196,7 +196,7 @@
                             </button>
                             <button type="submit" name="action" value="complete" 
                                     class="btn btn-success btn-md"
-                                    onclick="return confirm('Bạn có chắc chắn muốn HOÀN TẤT phiếu này không? Phiếu sẽ chuyển sang trạng thái Đã xong.');">
+                                    onclick="return confirm('Bạn có chắc chắn muốn HOÀN TẤT không? Phiếu sẽ chuyển sang trạng thái đã có kết quả.');">
                                     <i class="fas fa-check-circle"></i> Lưu kết quả (F9)
                             </button>
                         </div>
@@ -315,7 +315,7 @@ $(document).ready(function() {
             
             // Nếu phím bấm là Enter (Mã 13)
             if (e.which === 13) {
-                e.preventDefault(); // <--- QUAN TRỌNG NHẤT: Chặn form submit
+                e.preventDefault(); 
                 
                 // Logic: Tự động nhảy sang ô input tiếp theo
                 var inputs = $('form input[type="text"]:visible:not([readonly])'); // Chỉ lấy các ô đang hiện và không bị khóa

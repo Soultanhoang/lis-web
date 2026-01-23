@@ -1,4 +1,4 @@
-<div class="card">
+<!-- <div class="card">
     <div class="card-header bg-info">
         <h3 class="card-title">Danh sách Mẫu bệnh phẩm (Cần lấy)</h3>
     </div>
@@ -42,4 +42,4 @@
             </tbody>
         </table>
     </div>
-</div>
+</div> -->

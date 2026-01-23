@@ -459,7 +459,7 @@ $(document).ready(function() {
             checkbox.prop('disabled', true); 
             // Trả về JSON: { data: [ {id, test_code, test_name, category_name, price}, ... ] }
             $.ajax({
-                url: "/test-types/get-by-category", // <--- CẦN ROUTE NÀY
+                url: "/test-types/get-by-category", 
                 type: "GET",
                 data: { category: categoryName },
                 success: function(response) {

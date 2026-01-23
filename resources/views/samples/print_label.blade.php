@@ -118,7 +118,7 @@
     <label for="quantity">Số lượng tem:</label>
     <input type="number" id="quantity" value="1" min="1">
     
-    <button onclick="generateLabels()">Xem thử</button>
+    <!-- <button onclick="generateLabels()">Xem thử</button> -->
     <button onclick="window.print()">In Tem</button>
     <button onclick="window.close()">Đóng</button>
 </div>

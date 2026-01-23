@@ -145,7 +145,7 @@
         new Chart(document.getElementById('testTypeChart'), {
             type: 'doughnut', // Biểu đồ vành khuyên
             data: {
-                labels: typeLabels, // <--- BẮT BUỘC PHẢI CÓ DÒNG NÀY THÌ MỚI HIỆN TÊN
+                labels: typeLabels, 
                 datasets: [{
                     data: typeData,
                     backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc'],

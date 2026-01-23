@@ -84,7 +84,7 @@ class SampleController extends Controller
                     'status'          => 'pending',
                 ]);
 
-                // Cập nhật ngược lại sample_id cho các kết quả (quan trọng)
+                // Cập nhật ngược lại sample_id cho các kết quả
                 foreach ($items as $result) {
                     $result->update(['sample_id' => $sample->id]);
                 }
@@ -125,9 +125,9 @@ class SampleController extends Controller
         try {
             // 1. Cập nhật trạng thái các MẪU được chọn -> 'received'
             Sample::whereIn('id', $request->sample_ids)->update([
-                'status' => 'received',
+                'status' => 'collected', // Đã lấy mẫu
                 'collected_at' => now(), // Thời điểm lấy
-                'received_at' => now(),  // Thời điểm nhận
+                // 'received_at' => now(),  // Thời điểm nhận
             ]);
             // 2. Lấy ID của phiếu chỉ định từ mẫu đầu tiên trong danh sách gửi lên
             $firstSampleId = $request->sample_ids[0];

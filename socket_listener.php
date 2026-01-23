@@ -162,7 +162,7 @@ do {
             if (!empty($obxSegments)) {
                   Log::info("  - Tìm thấy " . count($obxSegments) . " phân đoạn OBX:");
                   foreach ($obxSegments as $index => $obx) {
-                       // ... (logic lấy testCode, resultValue như cũ) ...
+                        // Lấy mã xét nghiệm từ OBX-3 và giá trị kết quả từ OBX-5
                         $testCode = null; $resultValue = null;
                         $obx3Value = $obx->getField(3); $obx5Value = $obx->getField(5);
                         if ($obx3Value) { /* ... logic lấy testCode ... */ if (is_array($obx3Value)) { $testCode = isset($obx3Value[0]) ? trim($obx3Value[0]) : null; } elseif (is_object($obx3Value)) { $comp1 = $obx3Value->getComponent(1); $testCode = $comp1 ? $comp1->getValue() : null; } elseif (is_string($obx3Value)) { $parts = explode('^', $obx3Value); $testCode = trim($parts[0] ?? null); } }
@@ -197,7 +197,7 @@ do {
                         $testRequest = $sample->testRequest;
                         
                         // Cập nhật trạng thái mẫu: Đã nhận kết quả
-                        $sample->update(['status' => 'received']); // Hoặc 'analyzed' nếu bạn muốn thêm trạng thái này
+                        $sample->update(['status' => 'received', 'received_at' => now()]); 
                     } else {
                         // FALLBACK: Nếu không tìm thấy mẫu, thử tìm trực tiếp bằng Mã phiếu (Hỗ trợ quy trình cũ)
                         Log::warning("  - Không tìm thấy mẫu nào khớp với mã mẫu đang chạy. Thử tìm theo mã phiếu chỉ định...");

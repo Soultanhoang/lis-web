@@ -36,7 +36,7 @@ class TestRequestController extends Controller
             // 1. Tính toán mã dự kiến (Preview)
         $prefix = date('ymd'); 
         
-        // Lấy đơn mới nhất (Không cần lock ở đây vì chỉ để xem)
+        // Lấy mã phiếu mới nhất (Không cần lock ở đây vì chỉ để xem)
         $latest = TestRequest::where('request_code', 'like', $prefix . '%')
                     ->orderBy('request_code', 'desc')
                     ->first();
